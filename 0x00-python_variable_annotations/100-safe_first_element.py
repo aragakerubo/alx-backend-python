@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """Type-annotated function safe_first_element that takes a sequence input_seq
 of any type and returns its first element if available."""
-from typing import Union, Sequence, Any, TypeVar
+
+from typing import Sequence, Any, Union
 
 
-T = TypeVar("T")
-
-
-def safe_first_element(input_seq: Sequence[T]) -> Union[T, None]:
+def safe_first_element(lst: Sequence[Any]) -> Union[Any, None]:
     """Return the first element of a sequence if available."""
-    if input_seq:
-        return input_seq[0]
+    if lst:
+        return lst[0]
     else:
         return None
