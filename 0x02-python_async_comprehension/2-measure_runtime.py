@@ -2,15 +2,15 @@
 """2. Run time for four parallel comprehensions"""
 
 import asyncio
-import random
+import time
 from typing import List
 
-async_generator = __import__("0-async_generator").async_generator
+async_comprehension = __import__("1-async_comprehension").async_comprehension
 
 
 async def measure_runtime() -> float:
     """Measure runtime"""
-    start = asyncio.get_event_loop().time()
+    start = time.time()
     await asyncio.gather(*(async_comprehension() for _ in range(4)))
-    end = asyncio.get_event_loop().time()
+    end = time.time()
     return end - start
