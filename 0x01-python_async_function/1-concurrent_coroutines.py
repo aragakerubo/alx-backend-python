@@ -17,7 +17,7 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
         Number of delays
     max_delay : int
         Maximum delay
-    
+
     Returns
     -------
     List[float]
