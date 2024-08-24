@@ -71,6 +71,7 @@ class TestMemoize(unittest.TestCase):
                 return self.a_method()
 
         test = TestClass()
-        test.a_property
-        test.a_property
+        mock_get_json.return_value = 42
+        test.a_property()
+        test.a_property()
         mock_get_json.assert_called_once()
