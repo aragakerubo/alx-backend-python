@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Unittests for the client module."""
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
@@ -30,22 +30,12 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(org._public_repos_url, mock.return_value)
 
     @patch("client.get_json")
-    def test_public_repos(self, mock):
+    def test_public_repos(self, mock_method):
         """Test that GithubOrgClient.public_repos returns the correct value."""
-        payload = [{"name": "Google"}, {"name": "TT"}]
-        mock.return_value = payload
-
-        with patch(
-            "client.GithubOrgClient._public_repos_url",
-            new_callable=PropertyMock,
-        ) as mock_public_repos_url:
-            mock_public_repos_url.return_value = (
-                "https://api.github.com/orgs/google/repos"
-            )
-            client = GithubOrgClient("google")
-            self.assertEqual(client.public_repos(), ["Google", "TT"])
-            mock.assert_called_once()
-            mock_public_repos_url.assert_called_once()
+        mock_method.return_value = TEST_PAYLOAD
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), TEST_PAYLOAD)
+        mock_method.assert_called_once()
 
     @parameterized.expand(
         [
