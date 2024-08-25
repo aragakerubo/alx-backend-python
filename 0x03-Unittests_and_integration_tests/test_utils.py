@@ -51,32 +51,43 @@ class TestGetJson(unittest.TestCase):
         mock_requests_get.assert_called_once_with(test_url)
 
 
+# 3. Parameterize and patch
+# mandatory
+# Read about memoization and familiarize yourself with the utils.memoize decorator.
+
+# Implement the TestMemoize(unittest.TestCase) class with a test_memoize method.
+
+# Inside test_memoize, define following class
+
+# class TestClass:
+
+#     def a_method(self):
+#         return 42
+
+#     @memoize
+#     def a_property(self):
+#         return self.a_method()
+# Use unittest.mock.patch to mock a_method. Test that when calling a_property twice, the correct result is returned but a_method is only called once using assert_called_once.
+
+
 class TestMemoize(unittest.TestCase):
     """TestMemoize"""
 
-    @patch.object("TestClass", "a_method")
+    @patch.object(TestClass, "a_method")
     def test_memoize(self, mock_a_method):
-        """Test that when calling a_property twice, the correct result
-        is returned but a_method is only called once using
-        assert_called_once
-        """
+        """Test memoize"""
 
         class TestClass:
-            """TestClass that was provided"""
 
             def a_method(self):
-                """method return value"""
                 return 42
 
             @memoize
             def a_property(self):
-                """property returns value"""
                 return self.a_method()
 
-        test_instance = TestClass()
-        mock_a_method.return_value = 42
-
-        test_instance.a_property()
-        test_instance.a_property()
+        test = TestClass()
+        test.a_property
+        test.a_property
 
         mock_a_method.assert_called_once()
