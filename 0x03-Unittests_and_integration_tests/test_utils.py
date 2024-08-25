@@ -54,7 +54,7 @@ class TestGetJson(unittest.TestCase):
 class TestMemoize(unittest.TestCase):
     """TestMemoize"""
 
-    @patch("utils.get_json")
+    @patch.object("TestClass", "a_method")
     def test_memoize(self, mock_get_json):
         """Test memoize"""
 
