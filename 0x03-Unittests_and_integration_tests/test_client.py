@@ -47,3 +47,17 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test that GithubOrgClient.has_license returns the correct value."""
         client = GithubOrgClient("google")
         self.assertEqual(client.has_license(repo, license_key), expected)
+
+
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test for GithubOrgClient."""
+
+    @parameterized.expand([("google"), ("abc")])
+    def test_public_repos(self, org):
+        """Integration test: public_repos."""
+        client = GithubOrgClient(org)
+        response = client.public_repos()
+        self.assertIsInstance(response, list)
+        self.assertTrue(all(isinstance(repo, dict) for repo in response))
+        self.assertTrue(all("name" in repo for repo in response))
+        self.assertTrue(all("license" in repo for repo in response))
