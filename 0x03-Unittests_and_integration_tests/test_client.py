@@ -63,7 +63,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up the class."""
-        cls.get_patcher = patch("client.get_json")
+        cls.get_patcher = patch(
+            "requests.get", side_effect=[cls.org_payload, cls.repos_payload]
+        )
         cls.mock_get = cls.get_patcher.start()
 
     @classmethod
@@ -88,3 +90,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("google")
         self.assertEqual(client.public_repos(), expected_repos)
         self.assertEqual(client.public_repos("apache-2.0"), apache2_repos)
+
+    def test_public_repos_with_license(self):
+        """Test public_repos method with license argument."""
+        self.mock_get.side_effect = [self.org_payload, self.repos_payload]
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos("my_license"), [])
+        self.assertEqual(client.public_repos("apache-2.0"), ["repo1", "repo2"])
