@@ -59,20 +59,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
 @parameterized_class(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-    [
-        (
-            {"repos_url": "http://test.com"},
-            [{"name": "test"}],
-            ["test"],
-            ["test"],
-        ),
-        (
-            {"repos_url": "http://test.com"},
-            [{"name": "test", "license": {"key": "apache-2.0"}}],
-            ["test"],
-            ["test"],
-        ),
-    ],
+    TEST_PAYLOAD,
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """TestIntegrationGithubOrgClient class."""
@@ -80,8 +67,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class."""
-        cls.get_patcher = patch("client.get_json")
-        cls.mock_get = cls.get_patcher.start()
+        cls.get_patcher = patch(
+            "requests.get", side_effect=[cls.org_payload, cls.repos_payload]
+        )
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
