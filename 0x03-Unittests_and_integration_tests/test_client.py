@@ -2,7 +2,7 @@
 """Unittests for the client module."""
 import unittest
 from unittest.mock import patch, Mock, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
@@ -55,3 +55,49 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test that GithubOrgClient.has_license returns the correct value."""
         client = GithubOrgClient("google")
         self.assertEqual(client.has_license(repo, license_key), expected)
+
+
+# We want to test the GithubOrgClient.public_repos method in an integration test. That means that we will only mock code that sends external requests.
+
+# Create the TestIntegrationGithubOrgClient(unittest.TestCase) class and implement the setUpClass and tearDownClass which are part of the unittest.TestCase API.
+
+# Use @parameterized_class to decorate the class and parameterize it with fixtures found in fixtures.py. The file contains the following fixtures:
+
+# org_payload, repos_payload, expected_repos, apache2_repos
+# The setupClass should mock requests.get to return example payloads found in the fixtures.
+
+# Use patch to start a patcher named get_patcher, and use side_effect to make sure the mock of requests.get(url).json() returns the correct fixtures for the various values of url that you anticipate to receive.
+
+# Implement the tearDownClass class method to stop the patcher.
+
+
+@parameterized_class(
+    "org_payload, repos_payload, expected_repos, apache2_repos",
+    [
+        (
+            {"repos_url": "http://test.com"},
+            [{"name": "test"}],
+            ["test"],
+            ["test"],
+        ),
+        (
+            {"repos_url": "http://test.com"},
+            [{"name": "test", "license": {"key": "apache-2.0"}}],
+            ["test"],
+            ["test"],
+        ),
+    ],
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """TestIntegrationGithubOrgClient class."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up class."""
+        cls.get_patcher = patch("client.get_json")
+        cls.mock_get = cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down class."""
+        cls.get_patcher.stop()
