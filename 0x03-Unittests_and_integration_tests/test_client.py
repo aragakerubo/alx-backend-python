@@ -67,12 +67,16 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         """Set up class."""
-        self.get_patcher = patch("client.get_json")
+        self.get_patcher = patch("requests.get")
         self.mock_get = self.get_patcher.start()
-        self.mock_get.side_effect = [
-            self.org_payload,
-            self.repos_payload,
-        ]
+
+        def side_effect(url):
+            """Side effect to simulate requests.get(url).json()"""
+            if url == "https://api.github.com/orgs/google":
+                return Mock(json=Mock(return_value=self.org_payload))
+            return Mock(json=Mock(return_value=self.repos_payload))
+
+        self.mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(self):
